@@ -1,41 +1,58 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using libraryManagement.services;
+using libraryManagement.services.implementation;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+class Program
 {
-    app.MapOpenApi();
-}
+    //public static string ApplicationName { get; } = "Library management";
+    
 
-//app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    public static void Main(string[] args)
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+        var builder = WebApplication.CreateBuilder(args);
+        ConfigureServices(builder.Services, builder.Configuration);
+        var app = builder.Build();
+        ConfigurePipeline(app);
+        app.Run();
+    }
 
-app.Run();
+    static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
+        
+        services.AddSingleton<IAuthorsService, AuthorsService>();
+        services.AddSingleton<IBooksService, BooksService>();
+        
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = "Library API",
+                Version = "v1",
+                Description = "Web API для управления библиотекой"
+            });
+        });
+    }
+    
+    static void ConfigurePipeline(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+    }
 }
