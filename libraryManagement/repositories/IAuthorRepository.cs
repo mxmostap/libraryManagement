@@ -1,4 +1,4 @@
-using libraryManagement.models;
+using libraryManagement.models.entities;
 
 namespace libraryManagement.repositories;
 

@@ -1,77 +1,44 @@
-using libraryManagement.models;
+using libraryManagement.models.entities;
+using libraryManagement.repositories;
+
 
 namespace libraryManagement.services.implementation;
 
 public class BookService: IBookService
 {
-    private readonly List<Book> _books;
-    private readonly IAuthorService _authorService;
-    private int _idCounter = 1;
+    private readonly IBookRepository _bookRepository;
+    private readonly IAuthorRepository _authorRepository;
 
-    public BookService(IAuthorService authorService)
+    public BookService(IBookRepository bookRepository, IAuthorRepository authorService)
     {
-        _authorService = authorService;
-        
-        _books = new List<Book>()
-        {
-            new Book
-            {
-                Id = _idCounter++,
-                Title = "Письмо к женщине",
-                PublishedYear = 2012,
-                AuthorId = 2
-            },
-            new Book
-            {
-                Id = _idCounter++,
-                Title = "Клен ты мой опавший",
-                PublishedYear = 2017,
-                AuthorId = 2
-            },
-            new Book
-            {
-                Id = _idCounter++,
-                Title = "Евгений Онегин",
-                PublishedYear = 2015,
-                AuthorId = 1
-            },
-        };
+        _bookRepository = bookRepository;
+        _authorRepository = authorService;
     }
 
-    public async Task<List<Book>> GetAllBooksAsync()
-    {
-        return await Task.FromResult(_books);
-    }
+    public async Task<List<Book>> GetAllBooksAsync() 
+        => await _bookRepository.GetAllBooksAsync();
 
     public async Task<Book?> GetBookByIdAsync(int id)
-    {
-        return await Task.FromResult(_books.FirstOrDefault(b => b.Id == id));
-    }
+        => await _bookRepository.GetBookByIdAsync(id);
+    
 
     public async Task<Book> AddBookAsync(Book book)
     {
-        if (!await _authorService.AuthorExistsAsync(book.AuthorId))
+        if (!await _authorRepository.AuthorExistsAsync(book.AuthorId))
             throw new ArgumentException("Автор с указанным ID не существует!");
-        
-        book.Id = _idCounter++;
-        _books.Add(book);
-        
-        return await Task.FromResult(book);
+
+        return await _bookRepository.AddBookAsync(book);
     }
     
     public async Task<Book?> UpdateBookAsync(Book book)
     {
-        var existingBook = await GetBookByIdAsync(book.Id);
+        var existingBook = await _bookRepository.GetBookByIdAsync(book.Id);
         if (existingBook != null)
         {
-            if (!await _authorService.AuthorExistsAsync(book.AuthorId))
+            if (!await _authorRepository.AuthorExistsAsync(book.AuthorId))
                 throw new ArgumentException("Автор с указанным ID не существует!");
-                
-            existingBook.Title = book.Title;
-            existingBook.PublishedYear = book.PublishedYear;
-            existingBook.AuthorId = book.AuthorId;
 
-            return existingBook;
+            return await _bookRepository.UpdateBookAsync(book);
         }
 
         return null;
@@ -79,9 +46,9 @@ public class BookService: IBookService
 
     public async Task<bool> DeleteBookAsync(int id)
     {
-        var book = await GetBookByIdAsync(id);
+        var book = await _bookRepository.GetBookByIdAsync(id);
         if (book != null)
-            return await Task.FromResult(_books.Remove(book));
+            return await _bookRepository.DeleteBookAsync(id);
         
         return false;
     }

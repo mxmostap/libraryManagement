@@ -1,4 +1,6 @@
+using libraryManagement.controllers.mappers;
 using libraryManagement.models;
+using libraryManagement.models.DTOs;
 using libraryManagement.services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +35,7 @@ public class AuthorsController: ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAuthorAsync([FromBody] Author author)
+    public async Task<IActionResult> CreateAuthorAsync([FromBody] CreateAuthorDto author)
     {
         if (author == null)
             return BadRequest("Данные автора не могут быть пустыми!");
@@ -41,24 +43,21 @@ public class AuthorsController: ControllerBase
         if (string.IsNullOrWhiteSpace(author.Name))
             return BadRequest("Имя автора не может быть пустым!");
 
-        var createdAuthor = await _authorService.AddAuthorAsync(author);
+        var createdAuthor = await _authorService.AddAuthorAsync(author.ToAuthor());
         
         return CreatedAtRoute("GetAuthor", new {id = createdAuthor.Id }, createdAuthor);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAuthorAsync(int id, [FromBody] Author author)
+    public async Task<IActionResult> UpdateAuthorAsync(int id, [FromBody] CreateAuthorDto author)
     {
         if (author == null)
             return BadRequest("Данные автора не могут быть пустыми!");
-
-        if (id != author.Id)
-            return BadRequest("Ошибка ввода Id!");
         
         if (string.IsNullOrWhiteSpace(author.Name))
             return BadRequest("Имя автора не может быть пустым!");
 
-        var updatedAuthor = await _authorService.UpdateAuthorAsync(author);
+        var updatedAuthor = await _authorService.UpdateAuthorAsync(author.ToUpdateAuthor(id));
         if (updatedAuthor == null)
             return NotFound($"Автор с Id {id} не найден.");
 

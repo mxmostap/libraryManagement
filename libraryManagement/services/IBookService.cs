@@ -1,4 +1,4 @@
-using libraryManagement.models;
+using libraryManagement.models.entities;
 
 namespace libraryManagement.services;
 
@@ -9,6 +9,4 @@ public interface IBookService
     Task<Book> AddBookAsync(Book book);
     Task<Book?> UpdateBookAsync(Book book);
     Task<bool> DeleteBookAsync(int id);
-    
-    //List<Book> GetBooksByAuthorId(int authorId);
 }

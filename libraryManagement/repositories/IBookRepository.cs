@@ -1,4 +1,4 @@
-using libraryManagement.models;
+using libraryManagement.models.entities;
 
 namespace libraryManagement.repositories;
 
@@ -9,4 +9,5 @@ public interface IBookRepository
     Task<Book> AddBookAsync(Book book);
     Task<Book?> UpdateBookAsync(Book book);
     Task<bool> DeleteBookAsync(int id);
+    Task<bool> BookExistsAsync(int id);
 }

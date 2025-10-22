@@ -1,4 +1,4 @@
-using libraryManagement.models;
+using libraryManagement.models.entities;
 
 namespace libraryManagement.services;
 
@@ -9,7 +9,4 @@ public interface IAuthorService
     Task<Author> AddAuthorAsync(Author author);
     Task<Author?> UpdateAuthorAsync(Author author);
     Task<bool> DeleteAuthorAsync(int id);
-    Task<bool> AuthorExistsAsync(int id);
-    
-    //List<Book> GetAuthorBooks(int authorId);
 }

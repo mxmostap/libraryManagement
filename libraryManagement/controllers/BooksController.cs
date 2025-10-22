@@ -1,4 +1,6 @@
+using libraryManagement.controllers.mappers;
 using libraryManagement.models;
+using libraryManagement.models.DTOs;
 using libraryManagement.services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +35,7 @@ public class BooksController: ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBookAsync([FromBody] Book book)
+    public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookDto book)
     {
         if (book == null)
             return BadRequest("Данные книги не могут быть пустыми!");
@@ -45,7 +47,7 @@ public class BooksController: ControllerBase
             return BadRequest("Год публикации введен некорректно!");
         try
         {
-            var createdBook = await _bookService.AddBookAsync(book);
+            var createdBook = await _bookService.AddBookAsync(book.ToBook());
             return CreatedAtRoute("GetBook", new {id = createdBook.Id}, createdBook);
         }
         catch (ArgumentException ex)
@@ -55,13 +57,10 @@ public class BooksController: ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBookAsync(int id, [FromBody] Book book)
+    public async Task<IActionResult> UpdateBookAsync(int id, [FromBody] CreateBookDto book)
     {
         if (book == null)
             return BadRequest("Данные книги не могут быть пустыми!");
-
-        if (id != book.Id)
-            return BadRequest("Ошибка ввода Id");
 
         if (string.IsNullOrWhiteSpace(book.Title))
             return BadRequest("Название книги не может быть пустым!");
@@ -71,7 +70,7 @@ public class BooksController: ControllerBase
 
         try
         {
-            var updatedBook = await _bookService.UpdateBookAsync(book);
+            var updatedBook = await _bookService.UpdateBookAsync(book.ToUpdateBook(id));
             if (updatedBook == null)
                 return NotFound($"Книга с Id {id} не найдена");
             
