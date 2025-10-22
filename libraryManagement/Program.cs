@@ -22,14 +22,16 @@ class Program
         services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.JsonSerializerOptions.WriteIndented = true;
             });
-        
-        services.AddSingleton<IAuthorsService, AuthorsService>();
-        services.AddSingleton<IBooksService, BooksService>();
+        services.Configure<RouteOptions>(options =>
+        {
+            options.LowercaseUrls = true;
+        });
+        //////////////////////////////////////////////////////////////////////////////////////
+        services.AddSingleton<IAuthorService, AuthorService>();
+        services.AddSingleton<IBookService, BookService>();
         
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>

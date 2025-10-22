@@ -2,15 +2,15 @@ using libraryManagement.models;
 
 namespace libraryManagement.services.implementation;
 
-public class BooksService: IBooksService
+public class BookService: IBookService
 {
     private readonly List<Book> _books;
-    private readonly IAuthorsService _authorsService;
+    private readonly IAuthorService _authorService;
     private int _idCounter = 1;
 
-    public BooksService(IAuthorsService authorsService)
+    public BookService(IAuthorService authorService)
     {
-        _authorsService = authorsService;
+        _authorService = authorService;
         
         _books = new List<Book>()
         {
@@ -36,14 +36,6 @@ public class BooksService: IBooksService
                 AuthorId = 1
             },
         };
-        /*foreach (var book in _books)
-        {
-            var author = _authorsService.GetAuthorById(book.AuthorId);
-            if (author != null)
-            {
-                book.Author = author;
-            }
-        }*/
     }
 
     public async Task<List<Book>> GetAllBooksAsync()
@@ -58,7 +50,7 @@ public class BooksService: IBooksService
 
     public async Task<Book> AddBookAsync(Book book)
     {
-        if (!await _authorsService.AuthorExistsAsync(book.AuthorId))
+        if (!await _authorService.AuthorExistsAsync(book.AuthorId))
             throw new ArgumentException("Автор с указанным ID не существует!");
         
         book.Id = _idCounter++;
@@ -72,7 +64,7 @@ public class BooksService: IBooksService
         var existingBook = await GetBookByIdAsync(book.Id);
         if (existingBook != null)
         {
-            if (!await _authorsService.AuthorExistsAsync(book.AuthorId))
+            if (!await _authorService.AuthorExistsAsync(book.AuthorId))
                 throw new ArgumentException("Автор с указанным ID не существует!");
                 
             existingBook.Title = book.Title;

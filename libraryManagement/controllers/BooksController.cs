@@ -2,30 +2,30 @@ using libraryManagement.models;
 using libraryManagement.services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace libraryManagement.controllers.implementation;
+namespace libraryManagement.controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class BooksController: ControllerBase, IBooksController
+[Route("api/books")]
+public class BooksController: ControllerBase
 {
-    private readonly IBooksService _booksService;
+    private readonly IBookService _bookService;
 
-    public BooksController(IBooksService booksService)
+    public BooksController(IBookService bookService)
     {
-        _booksService = booksService;
+        _bookService = bookService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllBooksAsync()
     {
-        var books = await _booksService.GetAllBooksAsync();
+        var books = await _bookService.GetAllBooksAsync();
         return Ok(books);
     }
 
     [HttpGet("{id}", Name = "GetBook")]
     public async Task<IActionResult> GetBookByIdAsync(int id)
     {
-        var book = await _booksService.GetBookByIdAsync(id);
+        var book = await _bookService.GetBookByIdAsync(id);
         if (book == null)
             return NotFound($"Книга с Id {id} не найдена!");
 
@@ -45,7 +45,7 @@ public class BooksController: ControllerBase, IBooksController
             return BadRequest("Год публикации введен некорректно!");
         try
         {
-            var createdBook = await _booksService.AddBookAsync(book);
+            var createdBook = await _bookService.AddBookAsync(book);
             return CreatedAtRoute("GetBook", new {id = createdBook.Id}, createdBook);
         }
         catch (ArgumentException ex)
@@ -71,7 +71,7 @@ public class BooksController: ControllerBase, IBooksController
 
         try
         {
-            var updatedBook = await _booksService.UpdateBookAsync(book);
+            var updatedBook = await _bookService.UpdateBookAsync(book);
             if (updatedBook == null)
                 return NotFound($"Книга с Id {id} не найдена");
             
@@ -86,7 +86,7 @@ public class BooksController: ControllerBase, IBooksController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBookAsync(int id)
     {
-        var result = await _booksService.DeleteBookAsync(id);
+        var result = await _bookService.DeleteBookAsync(id);
         if (!result)
             return NotFound($"Книга с Id {id} не найдена.");
 

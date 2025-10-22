@@ -2,30 +2,30 @@ using libraryManagement.models;
 using libraryManagement.services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace libraryManagement.controllers.implementation;
+namespace libraryManagement.controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class AuthorsController: ControllerBase, IAuthorsController
+[Route("api/authors")]
+public class AuthorsController: ControllerBase
 {
-    private readonly IAuthorsService _authorsService;
+    private readonly IAuthorService _authorService;
 
-    public AuthorsController(IAuthorsService authorsService)
+    public AuthorsController(IAuthorService authorService)
     {
-        _authorsService = authorsService;
+        _authorService = authorService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllAuthorsAsync()
     {
-        var authors = await _authorsService.GetAllAuthorsAsync();
+        var authors = await _authorService.GetAllAuthorsAsync();
         return Ok(authors);
     }
 
     [HttpGet("{id}", Name = "GetAuthor")]
     public async Task<IActionResult> GetAuthorByIdAsync(int id)
     {
-        var author = await _authorsService.GetAuthorByIdAsync(id);
+        var author = await _authorService.GetAuthorByIdAsync(id);
         if (author == null)
             return NotFound($"Автор с Id {id} не найден.");
 
@@ -41,7 +41,7 @@ public class AuthorsController: ControllerBase, IAuthorsController
         if (string.IsNullOrWhiteSpace(author.Name))
             return BadRequest("Имя автора не может быть пустым!");
 
-        var createdAuthor = await _authorsService.AddAuthorAsync(author);
+        var createdAuthor = await _authorService.AddAuthorAsync(author);
         
         return CreatedAtRoute("GetAuthor", new {id = createdAuthor.Id }, createdAuthor);
     }
@@ -58,7 +58,7 @@ public class AuthorsController: ControllerBase, IAuthorsController
         if (string.IsNullOrWhiteSpace(author.Name))
             return BadRequest("Имя автора не может быть пустым!");
 
-        var updatedAuthor = await _authorsService.UpdateAuthorAsync(author);
+        var updatedAuthor = await _authorService.UpdateAuthorAsync(author);
         if (updatedAuthor == null)
             return NotFound($"Автор с Id {id} не найден.");
 
@@ -68,7 +68,7 @@ public class AuthorsController: ControllerBase, IAuthorsController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAuthorAsync(int id)
     {
-        var result = await _authorsService.DeleteAuthorAsync(id);
+        var result = await _authorService.DeleteAuthorAsync(id);
         if (!result)
             return NotFound($"Автор с Id {id} не найден.");
 

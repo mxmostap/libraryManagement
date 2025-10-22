@@ -1,8 +1,8 @@
 using libraryManagement.models;
 
-namespace libraryManagement.services;
+namespace libraryManagement.repositories;
 
-public interface IAuthorsService
+public interface IAuthorRepository
 {
     Task<List<Author>> GetAllAuthorsAsync();
     Task<Author?> GetAuthorByIdAsync(int id);
@@ -10,6 +10,4 @@ public interface IAuthorsService
     Task<Author?> UpdateAuthorAsync(Author author);
     Task<bool> DeleteAuthorAsync(int id);
     Task<bool> AuthorExistsAsync(int id);
-    
-    //List<Book> GetAuthorBooks(int authorId);
 }

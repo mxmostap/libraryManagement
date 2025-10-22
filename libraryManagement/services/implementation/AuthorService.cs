@@ -2,12 +2,12 @@ using libraryManagement.models;
 
 namespace libraryManagement.services.implementation;
 
-public class AuthorsService: IAuthorsService
+public class AuthorService: IAuthorService
 {
     private readonly List<Author> _authors;
     private int _idCounter = 1;
 
-    public AuthorsService()
+    public AuthorService()
     {
         _authors = new List<Author>()
         {
