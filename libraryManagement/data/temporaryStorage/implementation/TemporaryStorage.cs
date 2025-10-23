@@ -1,5 +1,5 @@
 
-namespace libraryManagement.storage.implementation;
+namespace libraryManagement.data.temporaryStorage.implementation;
 
 public class TemporaryStorage<T>: ITemporaryStorage<T> where T : class
 {

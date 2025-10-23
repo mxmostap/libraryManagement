@@ -1,12 +1,11 @@
-using libraryManagement.models;
 using libraryManagement.models.DTOs;
 using libraryManagement.models.entities;
 
-namespace libraryManagement.controllers.mappers;
+namespace libraryManagement.extensions.mapping;
 
 public static class BookMappingExtensions
 {
-    public static Book ToBook(this CreateBookDto dto)
+    public static Book ToEntity(this CreateBookDto dto)
     {
         return new Book
         {
@@ -16,7 +15,7 @@ public static class BookMappingExtensions
         };
     }
     
-    public static Book ToUpdateBook(this CreateBookDto dto, int id)
+    public static Book ToEntity(this CreateBookDto dto, int id)
     {
         return new Book
         {

@@ -1,12 +1,11 @@
-using libraryManagement.models;
 using libraryManagement.models.DTOs;
 using libraryManagement.models.entities;
 
-namespace libraryManagement.controllers.mappers;
+namespace libraryManagement.extensions.mapping;
 
 public static class AuthorMappingExtensions
 {
-    public static Author ToAuthor(this CreateAuthorDto dto)
+    public static Author ToEntity(this CreateAuthorDto dto)
     {
         return new Author
         {
@@ -16,7 +15,7 @@ public static class AuthorMappingExtensions
         };
     }
     
-    public static Author ToUpdateAuthor(this CreateAuthorDto dto, int id)
+    public static Author ToEntity(this CreateAuthorDto dto, int id)
     {
         return new Author
         {

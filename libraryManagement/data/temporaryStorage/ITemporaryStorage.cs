@@ -1,4 +1,4 @@
-namespace libraryManagement.storage;
+namespace libraryManagement.data.temporaryStorage;
 
 public interface ITemporaryStorage<T> where T : class
 {

@@ -1,4 +1,4 @@
-using libraryManagement.controllers.mappers;
+using libraryManagement.extensions.mapping;
 using libraryManagement.models;
 using libraryManagement.models.DTOs;
 using libraryManagement.services;
@@ -47,7 +47,7 @@ public class BooksController: ControllerBase
             return BadRequest("Год публикации введен некорректно!");
         try
         {
-            var createdBook = await _bookService.AddBookAsync(book.ToBook());
+            var createdBook = await _bookService.AddBookAsync(book.ToEntity());
             return CreatedAtRoute("GetBook", new {id = createdBook.Id}, createdBook);
         }
         catch (ArgumentException ex)
@@ -70,7 +70,7 @@ public class BooksController: ControllerBase
 
         try
         {
-            var updatedBook = await _bookService.UpdateBookAsync(book.ToUpdateBook(id));
+            var updatedBook = await _bookService.UpdateBookAsync(book.ToEntity(id));
             if (updatedBook == null)
                 return NotFound($"Книга с Id {id} не найдена");
             

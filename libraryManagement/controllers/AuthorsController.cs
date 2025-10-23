@@ -1,4 +1,4 @@
-using libraryManagement.controllers.mappers;
+using libraryManagement.extensions.mapping;
 using libraryManagement.models;
 using libraryManagement.models.DTOs;
 using libraryManagement.services;
@@ -43,7 +43,7 @@ public class AuthorsController: ControllerBase
         if (string.IsNullOrWhiteSpace(author.Name))
             return BadRequest("Имя автора не может быть пустым!");
 
-        var createdAuthor = await _authorService.AddAuthorAsync(author.ToAuthor());
+        var createdAuthor = await _authorService.AddAuthorAsync(author.ToEntity());
         
         return CreatedAtRoute("GetAuthor", new {id = createdAuthor.Id }, createdAuthor);
     }
@@ -57,7 +57,7 @@ public class AuthorsController: ControllerBase
         if (string.IsNullOrWhiteSpace(author.Name))
             return BadRequest("Имя автора не может быть пустым!");
 
-        var updatedAuthor = await _authorService.UpdateAuthorAsync(author.ToUpdateAuthor(id));
+        var updatedAuthor = await _authorService.UpdateAuthorAsync(author.ToEntity(id));
         if (updatedAuthor == null)
             return NotFound($"Автор с Id {id} не найден.");
 
