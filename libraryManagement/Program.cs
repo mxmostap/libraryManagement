@@ -1,4 +1,4 @@
-using libraryManagement.extensions.dependencyInjection;
+using libraryManagement.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureServices();
